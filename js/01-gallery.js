@@ -3,20 +3,43 @@ import { galleryItems } from './gallery-items.js';
 
 console.log(galleryItems);
 
-var styleSheet = document.createElement("style");
-styleSheet.innerText = `https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.css`;
-document.head.appendChild(styleSheet);
+const galleryVal = document.querySelector(".gallery");
 
-var scriptSheet = document.createElement("script");
-scriptSheet.src = "https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.js";
-document.head.appendChild(scriptSheet);
+function imagesCreate() {
+    const imagesDone = [];
+    for (const image of galleryItems) {
+        const imageMade = document.createElement("li");
+        imageMade.classList.add("gallery__item");
+        imageMade.innerHTML = 
+        `<a class="gallery__link" href="${image.preview}">
+            <img
+                class="gallery__image"
+                src="${image.preview}"
+                data-source="${image.original}"
+                alt="${image.description}"
+            />
+        </a>`;
+        imagesDone.push(imageMade);
+    }
+    galleryVal.append(...imagesDone);
+}
 
-import * as basicLightbox from "https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.js";
+imagesCreate();
 
-let fullGallery = galleryItems.map(galleryItem => galleryItem.preview);
+function onGalleryItemClick(event) {
+    event.preventDefault();
+    const imageSrc = event.target.dataset.source;
+    const instance = basicLightbox.create(`<img src="${imageSrc}" width="800" height="600">`);
+    instance.show();
+}
 
-const instance = basicLightbox.create(`
-    <img src=${fullGallery[0]} width="800" height="600">
-`);
+function addGalleryItemsListener() {
+    galleryVal.addEventListener("click", (event) => {
+        if (event.target.classList.contains("gallery__image"))
+            onGalleryItemClick(event);
+    });
+}
 
-instance.show();
+addGalleryItemsListener();
+
+console.log(galleryItems);
