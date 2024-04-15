@@ -26,20 +26,21 @@ function imagesCreate() {
 
 imagesCreate();
 
-function onGalleryItemClick(event) {
-    event.preventDefault();
-    const imageSrc = event.target.dataset.source;
-    const instance = basicLightbox.create(`<img src="${imageSrc}" width="800" height="600">`);
-    instance.show();
-}
-
 function addGalleryItemsListener() {
     galleryVal.addEventListener("click", (event) => {
-        if (event.target.classList.contains("gallery__image"))
-            onGalleryItemClick(event);
+        if (event.target.classList.contains("gallery__image")){
+            event.preventDefault();
+            const instance = basicLightbox.create(`<img src="${event.target.dataset.source}" width="800" height="600">`, {
+                onShow: (instance) => {
+                    document.body.onkeydown = function(event){
+                        if(event.key == "Escape"){
+                            instance.close(); }
+                    }
+                }
+            });
+            instance.show();
+        }
     });
 }
 
 addGalleryItemsListener();
-
-console.log(galleryItems);
